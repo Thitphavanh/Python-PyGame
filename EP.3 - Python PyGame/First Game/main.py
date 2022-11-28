@@ -30,7 +30,7 @@ running = True  # True = YES, False = NO
 
 class Player(pygame.sprite.Sprite):
     def __init__(self):
-        """Main function alway run, when we are call"""
+        """ Main function alway run, when we are call """
         pygame.sprite.Sprite.__init__(self)
 
         img = "C:\\Users\\Hery\\Desktop\\My Projects\\Python-PyGame\\EP.3 - Python PyGame\\First Game\\aircraft.png"
