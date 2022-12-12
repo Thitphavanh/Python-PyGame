@@ -12,6 +12,13 @@ HEIGHT = 700
 # Colors
 black = (0, 0, 0)
 red = (255, 0, 0)
+white = (255, 255, 255)
+
+# Score
+SCORE = 0
+
+# Lives
+LIVES = 3
 
 # Frame per second(FPS)
 FPS = 60
@@ -24,7 +31,9 @@ pygame.display.set_caption("Phenomenal Game")
 
 # background
 
-background = ""
+bgImage = "C:\\Users\\Hery\\Desktop\\My Projects\\Python-PyGame\\EP.5 - Python PyGame\\background.png"
+background = pygame.image.load(bgImage).convert_alpha()
+background_rect = background.get_rect()
 
 # Create  clock of a game
 clock = pygame.time.Clock()
@@ -70,6 +79,7 @@ class Player(pygame.sprite.Sprite):
     def shoot(self):
         bullet = Bullet(self.rect.centerx, self.rect.top)
         all_sprites.add(bullet)
+        group_bullet.add(bullet)
 
 
 class Bullet(pygame.sprite.Sprite):
@@ -95,6 +105,17 @@ class Bullet(pygame.sprite.Sprite):
 
         if self.rect.y < 0:
             self.kill()
+
+
+font_name = pygame.font.match_font("arial")
+
+
+def draw_text(screen, text, size, y, x):
+    font = pygame.font.Font(font_name, size)
+    text_surface = font.render(text, True, white)
+    text_rect = text_surface.get_rect()
+    text_rect.topleft = (x, y)
+    screen.blit(text_surface, text_rect)
 
 
 class Enemy(pygame.sprite.Sprite):
@@ -132,6 +153,7 @@ class Enemy(pygame.sprite.Sprite):
 # Create Sprite group
 all_sprites = pygame.sprite.Group()
 group_enemy = pygame.sprite.Group()
+group_bullet = pygame.sprite.Group()
 
 # player
 player = Player()
@@ -161,13 +183,30 @@ while running:
 
     all_sprites.update()
 
-    collide = pygame.sprite.spritecollide(player, group_enemy, True)
-    print(collide)
+    collide = pygame.sprite.spritecollide(player, group_enemy, False)
+    # if collide:
+    #     LIVES -= 1
+
     if collide:
         running = False
 
-    # Use game background
+    # Bullet collission
+    hits = pygame.sprite.groupcollide(group_bullet, group_enemy, True, True)
+    # print(hits)
+    for h in hits:
+        enemy = Enemy()
+        all_sprites.add(enemy)
+        group_enemy.add(enemy)
+        # Add score
+        SCORE += 10 
+
+      # Use game background
     screen.fill(black)
+
+    screen.blit(background, background_rect)
+
+    draw_text(screen, f"SCORE: {SCORE}", 20, WIDTH-1250, 10)
+    draw_text(screen, f"LIVES: {LIVES}", 20, 50, 10)
 
     # Use all game actors
     all_sprites.draw(screen)
